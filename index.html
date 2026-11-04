@@ -275,8 +275,14 @@ html{-webkit-text-size-adjust:100%}body{margin:0;font-size:14px}img{max-width:10
    Paramètres du projet → Vos applications → Configuration du SDK).
    Laisse null pour une version sans synchronisation (navigateur seul).
    ===================================================================== */
-const FIREBASE_CONFIG = = { apiKey: "...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
-
+const FIREBASE_CONFIG = {
+  apiKey: "AIza...",
+  authDomain: "boite-a-seances-xxxxx.firebaseapp.com",
+  projectId: "boite-a-seances-xxxxx",
+  storageBucket: "boite-a-seances-xxxxx.firebasestorage.app",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abc123"
+};
 /* Stockage : Firebase (synchronisé, compte Google) ou navigateur (local) */
 (function(){
   const KEY="boite-a-seances-v1";let store={},persistent=true;
