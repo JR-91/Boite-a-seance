@@ -261,7 +261,7 @@ table.rec input[type=month]{width:100%;max-width:150px}
 <style>
 html{-webkit-text-size-adjust:100%}body{margin:0;font-size:14px}img{max-width:100%}
 .bk{padding-block:24px 40px;border-top:1px solid var(--line);margin-top:24px}.bk h2{margin-bottom:4px}.bk-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.bk-row label.btn{display:inline-block}
-.auth{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.auth{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.auth-err{flex-basis:100%;font-size:12px;color:var(--fI);max-width:60ch}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -314,7 +314,8 @@ const FIREBASE_CONFIG = {
   window.__bas={ready,mode:()=>mode,user:()=>fbUser,configured:()=>!!(FIREBASE_CONFIG&&window.firebase),export:()=>clone(store),import:o=>{store=o||{};persist();location.reload()},persistent:()=>persistent,
     signIn:()=>{const p=new firebase.auth.GoogleAuthProvider();auth.signInWithPopup(p).catch(e=>{if(e&&(e.code==="auth/popup-blocked"||e.code==="auth/operation-not-supported-in-this-environment"||e.code==="auth/cancelled-popup-request"))auth.signInWithRedirect(p);else alertMsg(e)})},
     signOut:()=>auth.signOut()};
-  function alertMsg(e){const m=document.getElementById("auth-msg");if(m)m.textContent="Connexion impossible : "+((e&&e.code)||"erreur inconnue")+". Vérifie que l'adresse du site est dans les domaines autorisés de Firebase."}
+  const ERR={"auth/unauthorized-domain":"cette adresse n'est pas dans les domaines autorisés de Firebase (Authentication → Paramètres → Domaines autorisés).","auth/operation-not-allowed":"la connexion Google n'est pas activée (Authentication → Méthode de connexion → Google).","auth/popup-closed-by-user":"la fenêtre s'est fermée avant la fin. Réessaie ; si elle se ferme toute seule, autorise les fenêtres pop-up et les cookies tiers pour ce site, ou essaie avec Chrome.","auth/invalid-api-key":"la clé apiKey de la configuration est incorrecte.","auth/configuration-not-found":"Authentication n'est pas encore activé dans le projet (bouton Commencer).","auth/network-request-failed":"problème de réseau."};
+  function alertMsg(e){const c=(e&&e.code)||"erreur inconnue";const t="Connexion impossible ("+c+") : "+(ERR[c]||((e&&e.message)||""));console.warn(e);["auth-msg","auth-err"].forEach(id=>{const m=document.getElementById(id);if(m)m.textContent=t})}
 })();
 </script>
 
@@ -1264,7 +1265,7 @@ route(); renderChips(); renderVdot(); renderGrid(); renderWeeks();
 (function(){window.__bas.ready.then(()=>{
   const top=document.querySelector(".topin"),box=document.createElement("div");box.className="auth";
   if(window.__bas.configured()){const u=window.__bas.user();
-    box.innerHTML=u?`<span class="hint">${(u.email||"Compte Google").replace(/[<>&]/g,"")}</span><button class="btn" id="auth-out" type="button">Déconnexion</button>`:`<button class="btn primary" id="auth-in" type="button">Se connecter avec Google</button>`;
+    box.innerHTML=u?`<span class="hint">${(u.email||"Compte Google").replace(/[<>&]/g,"")}</span><button class="btn" id="auth-out" type="button">Déconnexion</button>`:`<button class="btn primary" id="auth-in" type="button">Se connecter avec Google</button><span class="auth-err" id="auth-err" role="alert"></span>`;
     top.appendChild(box);
     if(u)document.getElementById("auth-out").onclick=()=>window.__bas.signOut();else document.getElementById("auth-in").onclick=()=>window.__bas.signIn();}
   const cloud=window.__bas.mode()==="cloud";
